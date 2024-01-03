@@ -4,7 +4,7 @@ using System.Linq;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Asp.Versioning;
+
 
 namespace Travel.WebApi.Controllers.v1
 {

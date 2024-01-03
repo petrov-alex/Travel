@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -59,23 +60,30 @@ namespace Travel.WebApi
             });
         }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-          if (env.IsDevelopment())
-          {
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Travel.WebApi v1"));
-          }
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+				app.UseSwagger();
+				app.UseSwaggerUI(c =>
+				{
+					foreach (var description in provider.ApiVersionDescriptions)
+					{
+					    c.SwaggerEndpoint(
+							$"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+					}
+				});
+			}
 
-          app.UseHttpsRedirection();
-          app.UseRouting();
-          app.UseAuthorization();
-          app.UseEndpoints(endpoints =>
-          {
-            endpoints.MapControllers();
-          });
-        }
-    }
+			app.UseHttpsRedirection();
+			app.UseRouting();
+			app.UseAuthorization();
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+			});
+		}
+	}
 }
