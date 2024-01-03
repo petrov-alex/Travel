@@ -31,4 +31,10 @@
     <ProjectReference Include="..\..\infrastructure\Travel.Shared\Travel.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TravelTourDatabase.sqlite3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
