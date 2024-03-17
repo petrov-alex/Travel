@@ -1,22 +1,40 @@
-using Asp.Versioning;
+//using Asp.Versioning;
+//using Asp.Versioning.ApiExplorer;
+//using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore.Hosting;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Extensions.Configuration;
+//using Microsoft.Extensions.DependencyInjection;
+//using Microsoft.Extensions.Hosting;
+//using Microsoft.Extensions.Options;
+//using Microsoft.OpenApi.Models;
+//using Swashbuckle.AspNetCore.SwaggerGen;
+//using System.Collections.Generic;
+//using Travel.Application;
+//using Travel.Application.Common.Interfaces;
+//using Travel.Data;
+//using Travel.Identity;
+//using Travel.Identity.Helpers;
+//using Travel.Identity.Services;
+//using Travel.Shared;
+//using Travel.WebApi.Filters;
+//using Travel.WebApi.Helpers;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
 using Travel.Application;
-using Travel.Application.Common.Interfaces;
 using Travel.Data;
 using Travel.Identity;
 using Travel.Identity.Helpers;
-using Travel.Identity.Services;
 using Travel.Shared;
+using Travel.WebApi.Extensions;
 using Travel.WebApi.Filters;
 using Travel.WebApi.Helpers;
 
@@ -24,18 +42,17 @@ namespace Travel.WebApi
 {
     public class Startup
     {
-    public Startup(IConfiguration configuration)
-    {
-      Configuration = configuration;
-    }
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-    public IConfiguration Configuration { get; }
-
+        public IConfiguration Configuration { get; }
     // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplication();
-            services.AddInfrastructureData();
+            services.AddApplication(Configuration);
+            services.AddInfrastructureData(Configuration);
             services.AddInfrastructureShared(Configuration);
             services.AddInfrastructureIdentity(Configuration);
 
@@ -48,74 +65,97 @@ namespace Travel.WebApi
                 options.SuppressModelStateInvalidFilter = true
             );
 
-            services.AddSwaggerGen(c =>
-            {
-                c.OperationFilter<SwaggerDefaultValues>();
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.OperationFilter<SwaggerDefaultValues>();
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme.",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer"
-                });
+            //    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            //    {
+            //        Description = "JWT Authorization header using the Bearer scheme.",
+            //        Name = "Authorization",
+            //        In = ParameterLocation.Header,
+            //        Type = SecuritySchemeType.Http,
+            //        Scheme = "bearer"
+            //    });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        }, new List<string>()
-                    }
-                });
-            });
+            //    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            //    {
+            //        {
+            //            new OpenApiSecurityScheme
+            //            {
+            //                Reference = new OpenApiReference
+            //                {
+            //                    Type = ReferenceType.SecurityScheme,
+            //                    Id = "Bearer"
+            //                }
+            //            }, new List<string>()
+            //        }
+            //    });
+            //});
+
+            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+            //services.AddApiVersioning(config =>
+            //{
+            //    config.DefaultApiVersion = new ApiVersion(1, 0);
+            //    config.AssumeDefaultVersionWhenUnspecified = true;
+            //    config.ReportApiVersions = true;
+            //}).AddApiExplorer(options =>
+            //{
+            //    options.GroupNameFormat = "'v'VVV";
+            //});
+            services.AddApiVersioningExtension();
+            services.AddVersionedApiExplorerExtension();
+            services.AddSwaggerGenExtension();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-
-            services.AddApiVersioning(config =>
-            {
-                config.DefaultApiVersion = new ApiVersion(1, 0);
-                config.AssumeDefaultVersionWhenUnspecified = true;
-                config.ReportApiVersions = true;
-            }).AddApiExplorer(options =>
-            {
-                options.GroupNameFormat = "'v'VVV";
-            });
         }
 
+        //      // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //      public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
+        //{
+        //	if (env.IsDevelopment())
+        //	{
+        //		app.UseDeveloperExceptionPage();
+        //		app.UseSwagger();
+        //		app.UseSwaggerUI(c =>
+        //		{
+        //			foreach (var description in provider.ApiVersionDescriptions)
+        //			{
+        //			    c.SwaggerEndpoint(
+        //					$"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+        //			}
+        //		});
+        //	}
+
+        //	app.UseHttpsRedirection();
+        //	app.UseRouting();
+
+        //          app.UseMiddleware<JwtMiddleware>();
+
+        //          app.UseAuthorization();
+        //	app.UseEndpoints(endpoints =>
+        //	{
+        //		endpoints.MapControllers();
+        //	});
+        //}
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-				app.UseSwagger();
-				app.UseSwaggerUI(c =>
-				{
-					foreach (var description in provider.ApiVersionDescriptions)
-					{
-					    c.SwaggerEndpoint(
-							$"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-					}
-				});
-			}
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwaggerExtension(provider);
+            }
 
-			app.UseHttpsRedirection();
-			app.UseRouting();
-
+            app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseMiddleware<JwtMiddleware>();
-
             app.UseAuthorization();
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-			});
-		}
-	}
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+    }
 }
