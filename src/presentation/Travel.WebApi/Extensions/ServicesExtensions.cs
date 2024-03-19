@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Travel.WebApi.Helpers;
@@ -22,7 +20,12 @@ namespace Travel.WebApi.Extensions
 
         public static void AddVersionedApiExplorerExtension(this IServiceCollection services)
         {
-            services.AddVersionedApiExplorer(options =>
+            services.AddApiVersioning(config =>
+            {
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                config.AssumeDefaultVersionWhenUnspecified = true;
+                config.ReportApiVersions = true;
+            }).AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
             });
