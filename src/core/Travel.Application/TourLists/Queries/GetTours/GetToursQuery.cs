@@ -59,13 +59,6 @@ namespace Travel.Application.TourLists.Queries.GetTours
             tourLists = JsonConvert.DeserializeObject<ToursVm>(serializedTourList);
 
             return tourLists;
-
-            //return new ToursVm {
-            //    Lists = await _context.TourLists
-            //        .ProjectTo<TourListDto>(_mapper.ConfigurationProvider)
-            //        .OrderBy(t => t.City)
-            //        .ToListAsync(cancellationToken)
-            //};
         }
     }
 }
