@@ -66,7 +66,9 @@ namespace Travel.Application.TourLists.Queries.GetTours
             }
             catch(Exception ex)
             {
+#if DEBUG
                 Debug.WriteLine(ex.Message);
+#endif
                 throw;
             }
         }
